@@ -15,7 +15,7 @@ import 'IconPicker/searchBar.dart';
 import 'Models/IconPack.dart';
 
 class FlutterIconPicker {
-  static Future<IconData?> showIconPicker(
+  static Future<MapEntry<String, IconData>?> showIconPicker(
     BuildContext context, {
 
     /// Defines if the searchbar will be
@@ -144,7 +144,7 @@ class FlutterIconPicker {
     if (backgroundColor == null)
       backgroundColor = Theme.of(context).dialogBackgroundColor;
 
-    IconData? iconPicked;
+    MapEntry<String, IconData>? iconPicked;
 
     final controller = IconController();
 
