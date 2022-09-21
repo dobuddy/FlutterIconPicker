@@ -109,7 +109,7 @@ class _IconPickerState extends State<IconPicker> {
                       var item = controller.entries.elementAt(index);
 
                       return GestureDetector(
-                        onTap: () => Navigator.pop(context, item.value),
+                        onTap: () => Navigator.pop(context, item),
                         child: widget.showTooltips!
                             ? Tooltip(
                                 message: item.key,
