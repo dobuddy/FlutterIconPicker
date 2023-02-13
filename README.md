@@ -8,6 +8,22 @@ This package provides an IconPicker with supported (or custom provided) Icons wh
 
 ![IconPicker](https://github.com/Ahmadre/FlutterIconPicker/blob/master/assets/FlutterIconPicker.png)
 
+## Disclaimer (Important)
+
+This package is maintained regularly, is stable and is used in production by many software solutions out there (Thank you all at this point 🙏).
+
+> However, it is not guaranteed that all icons are displayed correctly -> **why**? -> flutter framework is constantly changing `codePoint`'s for example for `Icons.camera`. So if you develop an app which uses an older flutter version and flutter_iconpicker version, you're good to go, but if you want to update your app and flutter version, the `codePoint`'s could be broken and not matching to `Icons.camera` for example anymore!
+
+So what can we do?:
+
+Simply use custom icons by providing a list of IconData's to the IconPicker (with the correct `codePoint`'s and NOT `Icons.camera`!)
+
+> Good: `'camera': IconData(0xe3af, fontFamily: 'MaterialIcons')`
+>
+> Bad: `'camera': Icons.camera`
+
+For example if you want to provide `material` icons, copy the actual icons from here: [icons.dart](https://raw.githubusercontent.com/flutter/flutter/master/packages/flutter/lib/src/material/icons.dart) and provide them to the IconPicker as custom icons.
+
 ## Supported IconPacks
 
 |     IconPack     | Supported |
@@ -30,7 +46,7 @@ To be able to build your app, add to your build command the flag: `--no-tree-sha
 
 ## API-Reference
 
-| __Parameter__           | __Type__           | __Default__ | __Short description__                |
+| **Parameter**           | **Type**           | **Default** | **Short description**                |
 | ----------------------- | ------------------ | ----------- | ------------------------------------- |
 | context (only required) | `BuildContext`     | `-`         | Required due to `AlertDialog`'s base. |
 | adaptiveDialog          | `bool`             | `false`     | If `true`, IconPicker will adapt depending on the screen size. If `false`, IconPicker will show itself inside an AlertDialog. |
