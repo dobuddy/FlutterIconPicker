@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_iconpicker/Models/configuration.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:fluttericonpickerexample/app/app_brightness.dart';
 import 'package:fluttericonpickerexample/app/icon_notifier.dart';
@@ -7,16 +8,14 @@ import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late IconNotifier notifier;
-
   bool isAdaptive = true;
   bool showTooltips = false;
   bool showSearch = true;
@@ -24,22 +23,30 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    notifier = Provider.of<IconNotifier>(context, listen: false);
   }
 
-  _pickIcon() async {
-    IconData? icon = await FlutterIconPicker.showIconPicker(
+  Future<void> _pickIcon() async {
+    IconPickerIcon? icon = await showIconPicker(
       context,
-      adaptiveDialog: isAdaptive,
-      showTooltips: showTooltips,
-      showSearchBar: showSearch,
-      iconPickerShape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      iconPackModes: [IconPack.cupertino, IconPack.lineAwesomeIcons],
+      configuration: SinglePickerConfiguration(
+        preSelected: Provider.of<IconNotifier>(context, listen: false).icon,
+        adaptiveDialog: isAdaptive,
+        showTooltips: showTooltips,
+        showSearchBar: showSearch,
+        iconPickerShape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        iconPackModes: IconNotifier.starterPacks,
+        searchComparator: (String search, IconPickerIcon icon) =>
+            search
+                .toLowerCase()
+                .contains(icon.name.replaceAll('_', ' ').toLowerCase()) ||
+            icon.name.toLowerCase().contains(search.toLowerCase()),
+      ),
     );
 
     if (icon != null) {
-      notifier.iconData = icon;
+      Provider.of<IconNotifier>(context, listen: false)
+          .setIconData(icon, pack: icon.pack);
       setState(() {});
 
       debugPrint(
@@ -53,26 +60,28 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('Flutter Icon Picker Demo'),
         actions: [
-          IconButton(
-            icon: Icon(notifier.brightness.icon),
-            onPressed: () {
-              switch (notifier.brightness.mode) {
-                case ThemeMode.dark:
-                  notifier.brightness = AppBrightness.light;
-                  break;
-                case ThemeMode.light:
-                  notifier.brightness = AppBrightness.system;
-                  break;
-                case ThemeMode.system:
-                  notifier.brightness = AppBrightness.dark;
-                  break;
-                default:
-                  break;
-              }
-              setState(() {});
-            },
-            tooltip: 'Switch brightness',
-          ),
+          Consumer<IconNotifier>(builder: (context, notifier, _) {
+            return IconButton(
+              icon: Icon(notifier.brightness.icon),
+              onPressed: () {
+                switch (notifier.brightness.mode) {
+                  case ThemeMode.dark:
+                    notifier.brightness = AppBrightness.light;
+                    break;
+                  case ThemeMode.light:
+                    notifier.brightness = AppBrightness.system;
+                    break;
+                  case ThemeMode.system:
+                    notifier.brightness = AppBrightness.dark;
+                    break;
+                  default:
+                    break;
+                }
+                setState(() {});
+              },
+              tooltip: 'Switch brightness',
+            );
+          }),
           IconButton(
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
@@ -89,36 +98,47 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            ButtonBar(
-              alignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: _pickIcon,
-                  child: Text(notifier.iconData != null
-                      ? 'Change Icon'
-                      : 'Open IconPicker'),
-                ),
-                if (notifier.iconData != null)
+            Consumer<IconNotifier>(builder: (context, notifier, _) {
+              return OverflowBar(
+                alignment: MainAxisAlignment.center,
+                children: [
                   ElevatedButton(
-                    onPressed: () => setState(() => notifier.iconData = null),
-                    child: const Text('Clear Icon'),
+                    onPressed: _pickIcon,
+                    child: AnimatedSize(
+                      duration: const Duration(milliseconds: 300),
+                      child: Text(notifier.icon != null
+                          ? 'Change Icon'
+                          : 'Open IconPicker'),
+                    ),
                   ),
-              ],
-            ),
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: notifier.icon != null
+                        ? ElevatedButton(
+                            onPressed: () async {
+                              await notifier.clearIconData();
+                              setState(() {});
+                            },
+                            child: const Text('Clear Icon'),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                ],
+              );
+            }),
             const SizedBox(height: 10),
             Consumer<IconNotifier>(
-              builder: (BuildContext ctx, dynamic d, Widget? w) =>
-                  AnimatedSwitcher(
+              builder: (ctx, iconNotifier, _) => AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
-                child: notifier.iconData != null
+                child: iconNotifier.icon != null
                     ? Column(
                         children: [
-                          Icon(notifier.iconData),
+                          Icon(iconNotifier.icon?.data),
                           const SizedBox(
                             height: 15,
                           ),
                           Text(
-                            'Database Entry:\n${serializeIcon(notifier.iconData!).toString()}',
+                            'Database Entry:\n${serializeIcon(iconNotifier.icon!).toString()}',
                           ),
                         ],
                       )

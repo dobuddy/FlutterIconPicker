@@ -1,3 +1,128 @@
+## [4.0.1] - 26.09.2024
+
+* 🐛 Fixed iOS 18 requirements on FontAwesome Icons.
+  * Thanks to [SethuSenthil](https://github.com/SethuSenthil): [#86](https://github.com/Ahmadre/FlutterIconPicker/pull/86)
+* ⬆️ Update FontAwesome Icons (6.5.1)
+
+## [4.0.0] - 07.09.2024
+
+* 💡 Add `iconBuilder`: `IconWidgetBuilder` to create your own custom widgets for your displayed icons
+
+## [3.6.6] - 07.09.2024
+
+* 🐛 [Hotfix]: Fix mutually exclusive icons while searching (flatten results)
+
+## [3.6.5] - 07.09.2024
+
+* 🐛 Fix `generate_packs` `--packs` allowed packs parameter
+
+## [3.6.4] - 07.09.2024
+
+* 📝 Update `generate_packs` `--help` documentation to show allowed packs parameter
+
+## [3.6.3] - 07.09.2024
+
+* 🐛 Fix mutually exclusive icons while searching
+  * Thanks to [programotuojes](https://github.com/programotuojes) for the hint in [#80](https://github.com/Ahmadre/FlutterIconPicker/issues/80)
+
+## [3.6.2] - 03.09.2024
+
+* 🐛 Fix typo in `Cupertino.dart` icons
+
+## [3.6.1] - 01.09.2024
+
+* 📝 Add hints to picker modes
+
+## [3.6.0] - 31.08.2024
+
+* 💡 **[BREAKING CHANGE]** `showIconPicker` and `showMultipleIconPicker` use now the optional parameter: `SinglePickerConfiguration` and `MultiplePickerConfiguration` to configure the picker. Also the parameter `selectedIcon` is now called: `preSelected`.
+  * Follow this guide for more: [Migration Guide](https://github.com/Ahmadre/FlutterIconPicker/tree/master?tab=readme-ov-file#migration-guide-when-updating-to--360-breaking-change)
+* 💡 Add support for selecting multiple icons by `showMultipleIconPicker` which returns `List<IconPickerIcon>`
+* 💡 Add support for pre-selected icons by `preSelected` which consumes `List<IconPickerIcon>`
+* 💡 Update serialization helpers to support multiple icons to serialize
+  * Use new helpers `serializeIcons` and `deserializeIcons`
+
+## [3.5.2] - 31.08.2024
+
+* 🐛 Fix update `scrollview_observer` web support
+
+## [3.5.1] - 30.08.2024
+
+* 🐛 Fix `key` mapped value for custom icons
+
+## [3.5.0] - 30.08.2024
+
+* 💡 **[BREAKING CHANGE]** Improve returned Icon type
+  * Migrate from `IconData` to `IconPickerIcon` model which holds now the `key`, `data` and `pack` informations. For more see `IconPickerIcon` Model. Raw icon data can now be accessed by `icon.data`.
+* 💡 Add pre-selected Icon when opening the Icon picker by `selectedIcon`
+* 💡 Add `shouldScrollToSelectedIcon` to control if scrolling to pre-selected Icon when opening the Icon picker should be enabled or disabled
+* 💡 Add pre-selected color for selected icons by `selectedIconBackgroundColor`
+
+## [3.4.7] - 29.08.2024
+
+* ⬆️ Update dependencies to latest Flutter `3.24.*` and Dart SDK `3.5.*`
+* ⬆️ Update `dcli` to `6.0.5`
+
+## [3.4.6] - 10.07.2024
+
+* 🐛 (Windows): Support empty strings in project path
+  * Thanks to: [#71](https://github.com/Ahmadre/FlutterIconPicker/issues/71)
+
+## [3.4.5] - 27.05.2024
+
+* ⬆️ Update dependencies to latest Flutter `3.22.*` and Dart SDK `3.3.*`
+* 📝 Add more hints in documentation
+* 🐛 Fix `generate_packs` command (caused by `dcli` package). Thanks for the hint [#66](https://github.com/Ahmadre/FlutterIconPicker/issues/66)
+
+## [3.4.4] - 20.02.2024
+
+* 📝 Fix documentation
+
+## [3.4.3] - 19.02.2024
+
+* ⬆️ Update dependencies to latest Flutter 3.19.*
+
+## [3.4.2] - 14.02.2024
+
+* 📝 Update documentation
+
+## [3.4.1] - 14.02.2024
+
+* 🐛 Fix `generate_packs` command for macOS
+
+## [3.4.0] - 14.02.2024
+
+* 🐛 Fix App Size (Flutter app bundles were increased around >= 1 MB)
+  * `IconPack`'s are now generated on demand! For more see: [Troubleshooting](https://github.com/Ahmadre/FlutterIconPicker/tree/master?tab=readme-ov-file#troubleshooting) to generate the Icons you need as a developer!
+  * Also see: `dart run flutter_iconpicker:generate_packs --help` for general usage
+* 📝 Update documentation
+
+## [3.3.3] - 09.02.2024
+
+* 🐛 Fix `iconPickerShape` was not applied anymore with Material 3
+* 📝 Update documentation
+
+## [3.3.2] - 09.02.2024
+
+* ⬆️ **[BREAKING CHANGE]** Update main interface
+  * The IconPicker is now called via `IconData? icon = await showIconPicker(...` and not anymore like: `IconData? icon = await FlutterIconPicker.showIconPicker(...`. Please update your code accordingly!
+* 📝 Update documentation
+
+## [3.3.1] - 08.02.2024
+
+* ⬆️ **[BREAKING CHANGE]** Update dependencies
+  * Seperate Material Icons
+  * Please check this [Migration Guide](https://github.com/Ahmadre/FlutterIconPicker/tree/master?tab=readme-ov-file#migration-guide-when-updating-to--331-breaking-change) for more information
+* 📝 Update documentation
+
+## [3.3.0] - 08.02.2024
+
+* 💡 Add `searchComparator` to define a custom search function which can be used instead
+  * Thanks to [xunafay](https://github.com/xunafay) for the hint in [#61](https://github.com/Ahmadre/FlutterIconPicker/issues/61)
+* ⬆️ Update to latest `flutter 3.16.*`
+* ⬆️ Update dependencies
+* 📝 Update documentation
+
 ## [3.2.4] - 04.06.2023
 
 * ⬆️ Update to latest `flutter 3.10.*`
@@ -15,11 +140,11 @@
 
 ## [3.2.1] - 29.08.2022
 
-* Fix mainAxisSpacing and crossAxisSpacing. Thanks for the hint [#41](https://github.com/Ahmadre/FlutterIconPicker/issues/41)
+* 🐛 Fix mainAxisSpacing and crossAxisSpacing. Thanks for the hint [#41](https://github.com/Ahmadre/FlutterIconPicker/issues/41)
 
 ## [3.2.0] - 29.08.2022
 
-* [BREAKING-CHANGE]:
+* **[BREAKING CHANGE]**:
   * Update `CupertinoIcons` icon call by static accessor -> please check if your already stored icons matches and can be resolved!
 * Update dependencies to latest Flutter 3.0.5 Release
 * Update Material Icons to latest Icons from Stable branch
@@ -33,16 +158,16 @@
 
 * Update Dependencies
 * Update `font_awesome_flutter` icons
-* Fix Format
+* 🐛 Fix Format
 
 ## [3.1.3] - 16.04.2022
 
-* Fixed `pie_chart_outlined` not exists.
+* 🐛 Fixed `pie_chart_outlined` not exists.
   * Thanks to: [#43](https://github.com/Ahmadre/FlutterIconPicker/pull/43)
 
 ## [3.1.2] - 04.01.2022
 
-* Fixed default return Material Icons wiht new `iconPackModes` interface. Thanks to [jlnrrg](https://github.com/jlnrrg) for his hint in [#34](https://github.com/Ahmadre/FlutterIconPicker/issues/34#issuecomment-1003804252)
+* 🐛 Fixed default return Material Icons wiht new `iconPackModes` interface. Thanks to [jlnrrg](https://github.com/jlnrrg) for his hint in [#34](https://github.com/Ahmadre/FlutterIconPicker/issues/34#issuecomment-1003804252)
 
 ## [3.1.1] - 29.12.2021
 
@@ -57,24 +182,23 @@
 
 ## [3.0.5] - 26.12.2021
 
-* Fix outdated Material Icons.
+* 🐛 Fix outdated Material Icons.
   * Fixes: [#29](https://github.com/Ahmadre/FlutterIconPicker/issues/29)
     * Thanks to: [#32](https://github.com/Ahmadre/FlutterIconPicker/pull/32)
-* Fix outdated Font Awesome Icons.
+* 🐛 Fix outdated Font Awesome Icons.
   * Fixes: [#30](https://github.com/Ahmadre/FlutterIconPicker/issues/30)
     * Thanks to: [#31](https://github.com/Ahmadre/FlutterIconPicker/pull/31)
 * Update dependencies
 
 ## [3.0.4] - 02.09.20213
 
-* Fix outdated Material Icons.
-
-* Fixes: [#25](https://github.com/Ahmadre/FlutterIconPicker/issues/25)
-  * Thanks to: [#28](https://github.com/Ahmadre/FlutterIconPicker/pull/28)
+* 🐛 Fix outdated Material Icons.
+  * Fixes: [#25](https://github.com/Ahmadre/FlutterIconPicker/issues/25)
+    * Thanks to: [#28](https://github.com/Ahmadre/FlutterIconPicker/pull/28)
 
 ## [3.0.2] - 27.05.2021
 
-* Update MaterialIcons to pick through `Icons` rather then `IconData`
+* 🐛 Update MaterialIcons to pick through `Icons` rather then `IconData`
   * Fixes: [#22](https://github.com/Ahmadre/FlutterIconPicker/issues/22)
 
 ## [3.0.1+2] - 20.05.2021
@@ -91,7 +215,7 @@
 
 ## [3.0.1] - 20.05.2021
 
-* Fix and adapt to constant changes in IconPacks (especially: MaterialIcons) changes in `codePoints`
+* 🐛 Fix and adapt to constant changes in IconPacks (especially: MaterialIcons) changes in `codePoints`
   * Fixes: [#19](https://github.com/Ahmadre/FlutterIconPicker/issues/19) - many thanks to [Piotr Merski](https://github.com/merskip) for his solution here :)
 * Update example-project with explicit DB example (hive + provider)
 
@@ -111,7 +235,7 @@
 
 ## [2.2.2] - 26.10.2020
 
-* Update dependencies (Cupertino, LineAwesome, FontAwesome)
+* 🐛 Update dependencies (Cupertino, LineAwesome, FontAwesome)
   * Fixes: [#16](https://github.com/Ahmadre/FlutterIconPicker/issues/16)
   * Fixes: [#18](https://github.com/Ahmadre/FlutterIconPicker/issues/18)
 * Add `showSearchBar`
@@ -123,7 +247,7 @@
 
 ## [2.1.4] - 13.08.2020
 
-* Fix Search-Bar if custom icons are selected
+* 🐛 Fix Search-Bar if custom icons are selected
   * Fixes: [#11](https://github.com/Ahmadre/FlutterIconPicker/issues/11)
 
 ## [2.1.2] - 18.07.2020
@@ -137,7 +261,7 @@
 
 ## [2.0.6] - 21.05.2020
 
-* Fix `FontAwesomeIcons` Pack
+* 🐛 Fix `FontAwesomeIcons` Pack
 
 ## [2.0.5] - 18.05.2020
 
@@ -153,7 +277,7 @@
 * Add Color parameters for background and icons
 * Add Icon parameters for custom prefix and suffix icons in `SearchBar`
 * Add `ColorBrightness` to detect proper colors for texts depending of dialogs background color
-* Fix white gaps inside `IconPicker`
+* 🐛 Fix white gaps inside `IconPicker`
 * Add custom parameters: main and cross axis spacing between icons
 * Add `barrierDismissible`
 * Add API-Reference in Readme
@@ -173,18 +297,18 @@
 
 ## [1.1.1] - 31.03.2020
 
-* Fixed FontAwesome import
+* 🐛 Fixed FontAwesome import
 
 ## [1.1.0] - 21.03.2020
 
-* Add new IconPacks: `Material Outline`, `Cupertino`, `LineAwesome`, `FontAwesome`
+* 🐛 Add new IconPacks: `Material Outline`, `Cupertino`, `LineAwesome`, `FontAwesome`
   * Fixes: [#2](https://github.com/Ahmadre/FlutterIconPicker/issues/2)
 * Refactor IconPacks
 * Add `iconPackMode`
 
 ## [0.8.2] - 20.03.2020
 
-* Add default values
+* 🐛 Add default values
   * Fixes: [#3](https://github.com/Ahmadre/FlutterIconPicker/issues/3)
 * Swiped last search
 

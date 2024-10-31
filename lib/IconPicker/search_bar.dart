@@ -4,10 +4,11 @@
 /// rebar.ahmad@gmail.com
 
 import 'package:flutter/material.dart';
+import 'package:flutter_iconpicker/Models/icon_picker_icon.dart';
 import 'package:flutter_iconpicker/controllers/icon_controller.dart';
 import 'package:provider/provider.dart';
-import '../Helpers/ColorBrightness.dart';
-import '../Models/IconPack.dart';
+import '../Models/icon_pack.dart';
+import '../Helpers/color_brightness.dart';
 import 'icons.dart';
 
 class FIPSearchBar extends StatefulWidget {
@@ -19,43 +20,58 @@ class FIPSearchBar extends StatefulWidget {
     required this.searchClearIcon,
     required this.backgroundColor,
     this.customIconPack,
-    Key? key,
-  }) : super(key: key);
+    this.searchComparator,
+    super.key,
+  });
 
   final FIPIconController iconController;
   final List<IconPack>? iconPack;
-  final Map<String, IconData>? customIconPack;
+  final Map<String, IconPickerIcon>? customIconPack;
   final String? searchHintText;
   final Icon? searchIcon;
   final Icon? searchClearIcon;
   final Color? backgroundColor;
+  final SearchComparator? searchComparator;
 
   @override
   _FIPSearchBarState createState() => _FIPSearchBarState();
 }
 
 class _FIPSearchBarState extends State<FIPSearchBar> {
-  _search(String searchValue) {
-    Map<String, IconData> searchResult = Map<String, IconData>();
+  final SearchComparator _defaultSearchComparator =
+      (String searchValue, IconPickerIcon icon) =>
+          icon.name.toLowerCase().contains(searchValue.toLowerCase());
+  late final searchComparator =
+      widget.searchComparator ?? _defaultSearchComparator;
 
-    for (var pack in widget.iconPack!) {
-      FIPIconManager.getSelectedPack(pack).forEach((String key, IconData val) {
-        if (key.toLowerCase().contains(searchValue.toLowerCase())) {
-          searchResult.putIfAbsent(key, () => val);
-        }
-      });
+  void _search(String searchValue) {
+    List<MapEntry<String, IconPickerIcon>> searchResult = [];
+
+    final flatFIPPacks = widget.iconPack
+            ?.expand((pack) => FIPIconManager.getSelectedPack(pack).entries) ??
+        [];
+    final flatCustomPacks = widget.customIconPack?.entries ?? [];
+
+    for (var item in flatFIPPacks) {
+      if (searchComparator.call(
+          searchValue,
+          IconPickerIcon(
+              name: item.key, data: item.value.data, pack: item.value.pack))) {
+        searchResult.add(item);
+      }
     }
 
-    if (widget.customIconPack != null) {
-      widget.customIconPack!.forEach((String key, IconData val) {
-        if (key.toLowerCase().contains(searchValue.toLowerCase())) {
-          searchResult.putIfAbsent(key, () => val);
-        }
-      });
+    for (var item in flatCustomPacks) {
+      if (searchComparator.call(
+          searchValue,
+          IconPickerIcon(
+              name: item.key, data: item.value.data, pack: IconPack.custom))) {
+        searchResult.add(item);
+      }
     }
 
     setState(() {
-      if (searchResult.length != 0) {
+      if (searchResult.isNotEmpty) {
         widget.iconController.icons = searchResult;
       } else {
         widget.iconController.removeAll();
@@ -84,24 +100,27 @@ class _FIPSearchBarState extends State<FIPSearchBar> {
           hintText: widget.searchHintText,
           prefixIcon: widget.searchIcon,
           suffixIcon: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
             child: controller.searchTextController.text.isNotEmpty
                 ? IconButton(
                     icon: widget.searchClearIcon!,
                     onPressed: () => setState(() {
                       controller.searchTextController.clear();
-                      if (widget.customIconPack != null)
+                      if (widget.customIconPack != null) {
                         controller.addAll(widget.customIconPack ?? {});
+                      }
 
-                      if (widget.iconPack != null)
+                      if (widget.iconPack != null) {
                         for (var pack in widget.iconPack!) {
-                          controller.addAll(FIPIconManager.getSelectedPack(pack));
+                          controller
+                              .addAll(FIPIconManager.getSelectedPack(pack));
                         }
+                      }
                     }),
                   )
                 : const SizedBox(
                     width: 10,
                   ),
-            duration: const Duration(milliseconds: 300),
           ),
         ),
       );

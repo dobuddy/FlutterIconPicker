@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iconpicker/controllers/icon_controller.dart';
 import 'package:provider/provider.dart';
-import 'FullScreenDialog.dart';
-import 'AdaptiveDialog.dart';
-import '../Helpers/ColorBrightness.dart';
-import '../IconPicker/iconPicker.dart';
-import '../IconPicker/searchBar.dart';
-import '../Models/IconPack.dart';
+import '../IconPicker/multiple_icon_picker.dart';
+import '../Models/icon_picker_icon.dart';
+import 'fullscreen_dialog.dart';
+import 'adaptive_dialog.dart';
+import '../Helpers/color_brightness.dart';
+import '../IconPicker/icon_picker.dart';
+import '../IconPicker/search_bar.dart';
+import '../Models/icon_pack.dart';
 
 class FIPDefaultDialog extends StatelessWidget {
   const FIPDefaultDialog({
-    Key? key,
+    super.key,
     required this.controller,
+    this.selectedIconBackgroundColor,
     this.showSearchBar,
     this.routedView = false,
     this.adaptive = false,
@@ -29,12 +32,14 @@ class FIPDefaultDialog extends StatelessWidget {
     this.searchIcon,
     this.searchHintText,
     this.searchClearIcon,
+    this.searchComparator,
     this.noResultsText,
     this.iconPackMode,
     this.customIconPack,
-  }) : super(key: key);
+  });
 
   final FIPIconController controller;
+  final Color? selectedIconBackgroundColor;
   final bool? showSearchBar;
   final bool routedView;
   final bool adaptive;
@@ -52,9 +57,10 @@ class FIPDefaultDialog extends StatelessWidget {
   final Icon? searchIcon;
   final String? searchHintText;
   final Icon? searchClearIcon;
+  final SearchComparator? searchComparator;
   final String? noResultsText;
   final List<IconPack>? iconPackMode;
-  final Map<String, IconData>? customIconPack;
+  final Map<String, IconPickerIcon>? customIconPack;
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +71,7 @@ class FIPDefaultDialog extends StatelessWidget {
           if (routedView) {
             return FIPFullScreenDialog(
               iconController: controller,
+              selectedIconBackgroundColor: selectedIconBackgroundColor,
               showSearchBar: showSearchBar,
               showTooltips: showTooltips,
               backgroundColor: backgroundColor,
@@ -79,6 +86,7 @@ class FIPDefaultDialog extends StatelessWidget {
               iconSize: iconSize,
               mainAxisSpacing: mainAxisSpacing,
               crossAxisSpacing: crossAxisSpacing,
+              searchComparator: searchComparator,
             );
           }
           return AdaptiveDialog(
@@ -87,7 +95,7 @@ class FIPDefaultDialog extends StatelessWidget {
             child: Scaffold(
               backgroundColor: backgroundColor,
               body: Padding(
-                padding: EdgeInsets.only(
+                padding: const EdgeInsets.only(
                   top: 10,
                   bottom: 20,
                   left: 20,
@@ -95,30 +103,31 @@ class FIPDefaultDialog extends StatelessWidget {
                 ),
                 child: Column(
                   children: <Widget>[
-                    Container(
+                    SizedBox(
                       height: kToolbarHeight,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Padding(
-                            padding: EdgeInsets.only(left: 6),
+                            padding: const EdgeInsets.only(left: 6),
                             child: DefaultTextStyle(
-                              child: title!,
                               style: TextStyle(
-                                color:
-                                    FIPColorBrightness(backgroundColor!).isLight()
-                                        ? Colors.black
-                                        : Colors.white,
+                                color: FIPColorBrightness(backgroundColor!)
+                                        .isLight()
+                                    ? Colors.black
+                                    : Colors.white,
                                 fontSize: 20,
                               ),
+                              child: title!,
                             ),
                           ),
                           IconButton(
                             icon: Icon(
                               Icons.close,
-                              color: FIPColorBrightness(backgroundColor!).isLight()
-                                  ? Colors.black
-                                  : Colors.white,
+                              color:
+                                  FIPColorBrightness(backgroundColor!).isLight()
+                                      ? Colors.black
+                                      : Colors.white,
                             ),
                             onPressed: () => Navigator.pop(context),
                           ),
@@ -134,20 +143,38 @@ class FIPDefaultDialog extends StatelessWidget {
                         searchClearIcon: searchClearIcon,
                         searchHintText: searchHintText,
                         backgroundColor: backgroundColor,
+                        searchComparator: searchComparator,
                       ),
                     Expanded(
-                      child: FIPIconPicker(
-                        iconController: controller,
-                        showTooltips: showTooltips,
-                        iconPack: iconPackMode,
-                        customIconPack: customIconPack,
-                        iconColor: iconColor,
-                        backgroundColor: backgroundColor,
-                        noResultsText: noResultsText,
-                        iconSize: iconSize,
-                        mainAxisSpacing: mainAxisSpacing,
-                        crossAxisSpacing: crossAxisSpacing,
-                      ),
+                      child: controller.isMultiple
+                          ? FIPMultipleIconPicker(
+                              iconController: controller,
+                              selectedIconBackgroundColor:
+                                  selectedIconBackgroundColor,
+                              showTooltips: showTooltips,
+                              iconPack: iconPackMode,
+                              customIconPack: customIconPack,
+                              iconColor: iconColor,
+                              backgroundColor: backgroundColor,
+                              noResultsText: noResultsText,
+                              iconSize: iconSize,
+                              mainAxisSpacing: mainAxisSpacing,
+                              crossAxisSpacing: crossAxisSpacing,
+                            )
+                          : FIPIconPicker(
+                              iconController: controller,
+                              selectedIconBackgroundColor:
+                                  selectedIconBackgroundColor,
+                              showTooltips: showTooltips,
+                              iconPack: iconPackMode,
+                              customIconPack: customIconPack,
+                              iconColor: iconColor,
+                              backgroundColor: backgroundColor,
+                              noResultsText: noResultsText,
+                              iconSize: iconSize,
+                              mainAxisSpacing: mainAxisSpacing,
+                              crossAxisSpacing: crossAxisSpacing,
+                            ),
                     ),
                   ],
                 ),
@@ -159,13 +186,13 @@ class FIPDefaultDialog extends StatelessWidget {
             backgroundColor: backgroundColor,
             shape: iconPickerShape,
             title: DefaultTextStyle(
-              child: title!,
               style: TextStyle(
                 color: FIPColorBrightness(backgroundColor!).isLight()
                     ? Colors.black
                     : Colors.white,
                 fontSize: 20,
               ),
+              child: title!,
             ),
             content: Container(
               constraints: constraints,
@@ -180,20 +207,38 @@ class FIPDefaultDialog extends StatelessWidget {
                       searchClearIcon: searchClearIcon,
                       searchHintText: searchHintText,
                       backgroundColor: backgroundColor,
+                      searchComparator: searchComparator,
                     ),
                   Expanded(
-                    child: FIPIconPicker(
-                      iconController: controller,
-                      showTooltips: showTooltips,
-                      iconPack: iconPackMode,
-                      customIconPack: customIconPack,
-                      iconColor: iconColor,
-                      backgroundColor: backgroundColor,
-                      noResultsText: noResultsText,
-                      iconSize: iconSize,
-                      mainAxisSpacing: mainAxisSpacing,
-                      crossAxisSpacing: crossAxisSpacing,
-                    ),
+                    child: controller.isMultiple
+                        ? FIPMultipleIconPicker(
+                            iconController: controller,
+                            selectedIconBackgroundColor:
+                                selectedIconBackgroundColor,
+                            showTooltips: showTooltips,
+                            iconPack: iconPackMode,
+                            customIconPack: customIconPack,
+                            iconColor: iconColor,
+                            backgroundColor: backgroundColor,
+                            noResultsText: noResultsText,
+                            iconSize: iconSize,
+                            mainAxisSpacing: mainAxisSpacing,
+                            crossAxisSpacing: crossAxisSpacing,
+                          )
+                        : FIPIconPicker(
+                            iconController: controller,
+                            selectedIconBackgroundColor:
+                                selectedIconBackgroundColor,
+                            showTooltips: showTooltips,
+                            iconPack: iconPackMode,
+                            customIconPack: customIconPack,
+                            iconColor: iconColor,
+                            backgroundColor: backgroundColor,
+                            noResultsText: noResultsText,
+                            iconSize: iconSize,
+                            mainAxisSpacing: mainAxisSpacing,
+                            crossAxisSpacing: crossAxisSpacing,
+                          ),
                   ),
                 ],
               ),
@@ -201,8 +246,8 @@ class FIPDefaultDialog extends StatelessWidget {
             actions: [
               TextButton(
                 style: ButtonStyle(
-                  padding: MaterialStateProperty.resolveWith(
-                    (states) => const EdgeInsets.symmetric(horizontal: 20),
+                  padding: WidgetStateProperty.all(
+                    const EdgeInsets.symmetric(horizontal: 20),
                   ),
                 ),
                 onPressed: () => Navigator.of(context).pop(),

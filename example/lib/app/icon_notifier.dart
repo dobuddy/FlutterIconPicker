@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
@@ -7,34 +6,64 @@ import 'package:path_provider/path_provider.dart';
 import 'app_brightness.dart';
 
 class IconNotifier extends ChangeNotifier {
+  static final starterPacks = <IconPack>[IconPack.cupertino];
+
   IconNotifier._(
-    IconData? iconData,
+    IconPickerIcon? iconData,
+    List<IconPickerIcon>? iconsData,
     AppBrightness brightness,
-  )   : _iconData = iconData,
+  )   : _icon = iconData,
+        _icons = iconsData ?? [],
         _brightness = brightness;
 
   static late Box box;
 
-  IconData? _iconData;
+  List<IconPickerIcon> _icons = [];
+
+  IconPickerIcon? _icon;
 
   AppBrightness _brightness;
 
-  IconData? get iconData => _iconData;
+  IconPickerIcon? get icon => _icon;
 
-  set iconData(IconData? value) {
-    if (_iconData == value) {
+  void setIconData(
+    IconPickerIcon value, {
+    IconPack? pack,
+  }) {
+    if (_icon == value) {
       return;
     }
 
-    _iconData = value;
+    _icon = value;
 
-    if (value == null) {
-      box.delete('iconData');
-      notifyListeners();
-      return;
-    }
+    box.put(
+      'iconData',
+      serializeIcon(_icon!),
+    );
+    notifyListeners();
+  }
 
-    box.put('iconData', serializeIcon(_iconData!));
+  Future<void> clearIconData() async {
+    await box.delete('iconData');
+    _icon = null;
+    notifyListeners();
+  }
+
+  List<IconPickerIcon> get icons => _icons;
+
+  void setIconsData(List<IconPickerIcon> value) {
+    _icons = value;
+
+    box.put(
+      'iconsData',
+      serializeIcons(_icons),
+    );
+    notifyListeners();
+  }
+
+  Future<void> clearIconsData() async {
+    await box.delete('iconsData');
+    _icons = [];
     notifyListeners();
   }
 
@@ -64,14 +93,19 @@ class IconNotifier extends ChangeNotifier {
       box = Hive.box('FLIPBox');
     }
 
-    final iconData = await box.get('iconData') != null
+    final cachedIcon = await box.get('iconData') != null
         ? deserializeIcon(Map<String, dynamic>.from(await box.get('iconData')))
+        : null;
+
+    final cachedIcons = await box.get('iconsData') != null
+        ? deserializeIcons(await box.get('iconsData'))
         : null;
 
     final brightness = AppBrightness.from(await box.get('app.brightness'));
 
     return IconNotifier._(
-      iconData,
+      cachedIcon,
+      cachedIcons,
       brightness,
     );
   }

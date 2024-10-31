@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class AdaptiveDialog extends StatelessWidget {
   const AdaptiveDialog({
-    Key? key,
+    super.key,
     required this.child,
     required this.constraints,
     required this.shape,
-  }) : super(key: key);
+  });
 
   final Widget child;
   final BoxConstraints? constraints;
@@ -24,6 +24,7 @@ class AdaptiveDialog extends StatelessWidget {
           child: ConstrainedBox(
             constraints: constraints!,
             child: Dialog(
+              clipBehavior: Clip.antiAliasWithSaveLayer,
               shape: shape,
               child: child,
             ),
